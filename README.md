@@ -34,7 +34,7 @@ no AWS credentials, no cloud resources.**
 
 ```bash
 git clone https://github.com/pacosepulveda/aws-emulator-in-practice-labs.git
-cd aws-emulator-in-practice
+cd aws-emulator-in-practice-labs
 make setup          # installs pinned versions: AWS CLI, AWS Emulator 1.0.341, boto3
 make start          # starts the emulator on https://127.0.0.1:9297 (telemetry OFF)
 make test-cli       # Experiment B: STS / S3 / DynamoDB / SQS with AWS CLI
