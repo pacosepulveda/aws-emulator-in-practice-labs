@@ -1,0 +1,103 @@
+{
+  "fecha": "2026-11-13T15:25:39Z",
+  "repeticiones": 3,
+  "puerto": "9297",
+  "mediciones": [
+    {
+      "repeticion": 1,
+      "arranque_proceso_s": 0.56,
+      "arranque_hasta_health_s": 0.59,
+      "mem_arranque": {
+        "rss_kib": 292616,
+        "pss_kib": 290695
+      },
+      "mem_reposo_30s": {
+        "rss_kib": 292624,
+        "pss_kib": 290703
+      },
+      "bateria_10x_s3_ls_s": 9.68,
+      "mem_tras_bateria": {
+        "rss_kib": 313896,
+        "pss_kib": 311975
+      },
+      "log": "logs/perf_9297_rep1.log"
+    },
+    {
+      "repeticion": 2,
+      "arranque_proceso_s": 0.57,
+      "arranque_hasta_health_s": 0.59,
+      "mem_arranque": {
+        "rss_kib": 292828,
+        "pss_kib": 290968
+      },
+      "mem_reposo_30s": {
+        "rss_kib": 292836,
+        "pss_kib": 290976
+      },
+      "bateria_10x_s3_ls_s": 9.73,
+      "mem_tras_bateria": {
+        "rss_kib": 314112,
+        "pss_kib": 312252
+      },
+      "log": "logs/perf_9297_rep2.log"
+    },
+    {
+      "repeticion": 3,
+      "arranque_proceso_s": 0.57,
+      "arranque_hasta_health_s": 0.59,
+      "mem_arranque": {
+        "rss_kib": 292820,
+        "pss_kib": 290974
+      },
+      "mem_reposo_30s": {
+        "rss_kib": 292820,
+        "pss_kib": 290974
+      },
+      "bateria_10x_s3_ls_s": 9.65,
+      "mem_tras_bateria": {
+        "rss_kib": 313956,
+        "pss_kib": 312110
+      },
+      "log": "logs/perf_9297_rep3.log"
+    }
+  ],
+  "arranque_proceso_s": {
+    "mediana": 0.6,
+    "min": 0.56,
+    "max": 0.57
+  },
+  "arranque_hasta_health_s": {
+    "mediana": 0.6,
+    "min": 0.59,
+    "max": 0.59
+  },
+  "bateria_10x_s3_ls_s": {
+    "mediana": 9.7,
+    "min": 9.65,
+    "max": 9.73
+  },
+  "mem_arranque": {
+    "rss_mib_mediana": 286.0,
+    "pss_mib_mediana": 284.1,
+    "rss_mib_min_max": [
+      285.8,
+      286.0
+    ]
+  },
+  "mem_reposo_30s": {
+    "rss_mib_mediana": 286.0,
+    "pss_mib_mediana": 284.2,
+    "rss_mib_min_max": [
+      285.8,
+      286.0
+    ]
+  },
+  "mem_tras_bateria": {
+    "rss_mib_mediana": 306.6,
+    "pss_mib_mediana": 304.8,
+    "rss_mib_min_max": [
+      306.5,
+      306.8
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "laboratorio": "02-infrastructure-as-code",
+  "prueba": "I-1 Terraform (etapa A)",
+  "fecha_ejecucion": "2026-11-13",
+  "versiones": {"terraform": "1.13.3", "provider_aws": "6.16.0", "aws_emulator": "1.0.341"},
+  "alcance": "S3 (bucket+versioning) + DynamoDB + SQS con provider AWS contra el emulador",
+  "resultados": [
+    {"id": "I-1.0", "prueba": "terraform 1.13.3 instalado con verificación SHA256", "resultado": "PASS"},
+    {"id": "I-1.1", "prueba": "terraform init: provider aws 6.16.0 instalado (firma HashiCorp)", "resultado": "PASS"},
+    {"id": "I-1.2", "prueba": "terraform plan inicial: 4 recursos a crear", "resultado": "PASS"},
+    {"id": "I-1.3", "prueba": "terraform apply: 4 added, bucket visible en el emulador", "resultado": "PASS"},
+    {"id": "I-1.4", "prueba": "idempotencia (2º plan -detailed-exitcode)", "resultado": "PARTIAL",
+     "detalle": "HALLAZGO DE FIDELIDAD: describe_table del emulador omite atributos por defecto (stream_enabled, table_class, deletion_protection, on_demand_throughput) → provider 6.16 interpreta drift y propone recrear la tabla DynamoDB. S3 y SQS son estables entre planes. Candidato a issue en aws/aws-emulator"},
+    {"id": "I-1.5", "prueba": "drift deliberado (suspender versioning vía CLI)", "resultado": "PASS",
+     "detalle": "plan detecta el cambio (exit=2). Matiz: el provider propone 'replace' en vez de 'update in-place' para versioning"},
+    {"id": "I-1.6", "prueba": "terraform destroy: 4 destroyed, 0 recursos residuales", "resultado": "PASS"},
+    {"id": "I-1.7", "prueba": "seguridad: endpoint fijado, credenciales del emulador vía tfvars (gitignored), custom_ca_bundle TLS, skip_* requeridos por el emulador", "resultado": "PASS"}
+  ],
+  "hallazgos_provider_v6": [
+    "endpoints {} es un bloque (no argumento map) en provider v6",
+    "ca_bundle renombrado a custom_ca_bundle en provider v6",
+    "skip_ec2_metadata_check no existe en v6 (el scrub de env lo cubre)"
+  ],
+  "resumen": {"PASS": 7, "PARTIAL": 1, "FAIL": 0},
+  "referencias": "labs/02-infrastructure-as-code/DESIGN.md · ../01-getting-started/metodologia-medicion.md"
+}

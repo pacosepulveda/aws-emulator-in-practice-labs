@@ -1,0 +1,197 @@
+
+=== B1. STS get-caller-identity (identidad) ===
+08:24:26.120
+{
+    "UserId": "AIDAH5I7GEMO7ADXNFAZU",
+    "Account": "000000000000",
+    "Arn": "arn:aws:iam::000000000000:user/emulator"
+}
+RESULT B1: PASS
+
+=== B2. S3: crear bucket ===
+08:24:27.080
+make_bucket: aws-emulator-lab-01-cli
+RESULT B2: PASS
+
+=== B3. S3: subida, listado, descarga, eliminación ===
+08:24:28.081
+Completed 26 Bytes/26 Bytes (1.6 KiB/s) with 1 file(s) remainingupload: ../../../tmp/demo-object.txt to s3://aws-emulator-lab-01-cli/demo-object.txt
+2026-11-13 08:24:29         26 demo-object.txt
+Completed 26 Bytes/26 Bytes (6.1 KiB/s) with 1 file(s) remainingdownload: s3://aws-emulator-lab-01-cli/demo-object.txt to ../../../tmp/demo-object-down.txt
+delete: s3://aws-emulator-lab-01-cli/demo-object.txt
+RESULT B3: PASS
+
+=== B4. S3: versionado ===
+08:24:32.622
+{
+    "Status": "Enabled"
+}
+RESULT B4: PASS
+
+=== B5. S3: cifrado y Block Public Access (consulta) ===
+08:24:34.684
+    }
+}
+    }
+}
+RESULT B5: ver arriba (PASS si acepta y devuelve; UNSUPPORTED si no existe la operación)
+
+=== B6. DynamoDB: crear tabla + escribir + leer + borrar ===
+08:24:38.818
+
+aws: [ERROR]: An error occurred (ResourceNotFoundException) when calling the PutItem operation: Requested resource not found
+RESULT B6: FAIL
+
+=== B7. SQS: crear cola + enviar + recibir + eliminar ===
+08:24:40.809
+{
+    "Messages": [
+        {
+            "MessageId": "62983535-d20d-4910-a3ba-1b40e71722aa",
+            "ReceiptHandle": "MmU1NDJhY2EtZTE5Ni00YjkwLWEwYzctYzBmNjVhYzAzMGI5IGY0OGE0YjNjLWQ1NWEtNDliMy1hNDc2LTZjZTZjZjJhYjgzOCBhcm46YXdzOnNxczp1cy1lYXN0LTE6MDAwMDAwMDAwMDAwOmF3cy1lbXVsYXRvci1sYWItMDEtY2xp",
+            "MD5OfBody": "59b2188e259d72b6f58ae06a7443f3a5",
+            "Body": "mensaje-demo"
+        }
+    ]
+}
+RESULT B7: PASS
+
+=== B8. Limpieza S3 ===
+08:24:44.660
+RESULT B8: PASS
+
+DURACIÓN TOTAL B: 19.650614929s — log completo en /home/<usuario>/aws-emulator-in-practice/results/01-getting-started/logs/exp_b_aws_cli.log
+
+=== B1. STS get-caller-identity (identidad) ===
+08:25:49.327
+{
+    "UserId": "AIDAH5I7GEMO7ADXNFAZU",
+    "Account": "000000000000",
+    "Arn": "arn:aws:iam::000000000000:user/emulator"
+}
+RESULT B1: PASS
+
+=== B2. S3: crear bucket ===
+08:25:50.337
+make_bucket: aws-emulator-lab-01-cli
+RESULT B2: PASS
+
+=== B3. S3: subida, listado, descarga, eliminación ===
+08:25:51.418
+Completed 26 Bytes/26 Bytes (2.3 KiB/s) with 1 file(s) remainingupload: ../../../tmp/demo-object.txt to s3://aws-emulator-lab-01-cli/demo-object.txt
+2026-11-13 08:25:52         26 demo-object.txt
+Completed 26 Bytes/26 Bytes (7.7 KiB/s) with 1 file(s) remainingdownload: s3://aws-emulator-lab-01-cli/demo-object.txt to ../../../tmp/demo-object-down.txt
+delete: s3://aws-emulator-lab-01-cli/demo-object.txt
+RESULT B3: PASS
+
+=== B4. S3: versionado ===
+08:25:55.769
+{
+    "Status": "Enabled"
+}
+RESULT B4: PASS
+
+=== B5. S3: cifrado y Block Public Access (consulta) ===
+08:25:57.837
+    }
+}
+    }
+}
+RESULT B5: ver arriba (PASS si acepta y devuelve; UNSUPPORTED si no existe la operación)
+
+=== B6. DynamoDB: crear tabla + escribir + leer + borrar ===
+08:26:02.012
+
+aws: [ERROR]: An error occurred (ResourceInUseException) when calling the CreateTable operation: Table already exists: aws-emulator-lab-01-cli
+RESULT B6: FAIL
+
+=== B7. SQS: crear cola + enviar + recibir + eliminar ===
+08:26:03.021
+{
+    "Messages": [
+        {
+            "MessageId": "259cac36-fc53-48e8-a80b-a16e381a79eb",
+            "ReceiptHandle": "OGQwOTY2ZjQtY2Q2Zi00YTNjLTllMDAtZjFjYzg3ZThlZTcxIGNjYjk1NWY3LTI1MzEtNGI3My1hNDBjLWU4OTBkNjA2YjhkMCBhcm46YXdzOnNxczp1cy1lYXN0LTE6MDAwMDAwMDAwMDAwOmF3cy1lbXVsYXRvci1sYWItMDEtY2xp",
+            "MD5OfBody": "59b2188e259d72b6f58ae06a7443f3a5",
+            "Body": "mensaje-demo"
+        }
+    ]
+}
+RESULT B7: PASS
+
+=== B8. Limpieza S3 ===
+08:26:06.915
+RESULT B8: PASS
+
+DURACIÓN TOTAL B: 18.705104670s — log completo en /home/<usuario>/aws-emulator-in-practice/results/01-getting-started/logs/exp_b_aws_cli.log
+
+=== B1. STS get-caller-identity (identidad) ===
+08:27:45.604
+{
+    "UserId": "AIDAH5I7GEMO7ADXNFAZU",
+    "Account": "000000000000",
+    "Arn": "arn:aws:iam::000000000000:user/emulator"
+}
+RESULT B1: PASS
+
+=== B2. S3: crear bucket ===
+08:27:46.585
+make_bucket: aws-emulator-lab-01-cli
+RESULT B2: PASS
+
+=== B3. S3: subida, listado, descarga, eliminación ===
+08:27:47.615
+Completed 26 Bytes/26 Bytes (1.6 KiB/s) with 1 file(s) remainingupload: ../../../tmp/demo-object.txt to s3://aws-emulator-lab-01-cli/demo-object.txt
+2026-11-13 08:27:48         26 demo-object.txt
+Completed 26 Bytes/26 Bytes (7.5 KiB/s) with 1 file(s) remainingdownload: s3://aws-emulator-lab-01-cli/demo-object.txt to ../../../tmp/demo-object-down.txt
+delete: s3://aws-emulator-lab-01-cli/demo-object.txt
+RESULT B3: PASS
+
+=== B4. S3: versionado ===
+08:27:51.903
+{
+    "Status": "Enabled"
+}
+RESULT B4: PASS
+
+=== B5. S3: cifrado y Block Public Access (consulta) ===
+08:27:53.952
+    }
+}
+    }
+}
+RESULT B5: ver arriba (PASS si acepta y devuelve; UNSUPPORTED si no existe la operación)
+
+=== B6. DynamoDB: crear tabla + escribir + leer + borrar ===
+08:27:58.051
+{
+    "Item": {
+        "valor": {
+            "S": "demo"
+        },
+        "pk": {
+            "S": "item1"
+        }
+    }
+}
+RESULT B6: PASS
+
+=== B7. SQS: crear cola + enviar + recibir + eliminar ===
+08:28:06.051
+{
+    "Messages": [
+        {
+            "MessageId": "73570f86-8279-4f62-8b16-306220da392d",
+            "ReceiptHandle": "NWU0MmNhNWItNGQxZi00NmMwLWI0ZDQtMzE4MDg1ZGZmZGE0IGEwNDFmZGRhLTBkNjgtNDk5OS1iZDQ5LTBjOGZjMWVmZmQ2ZCBhcm46YXdzOnNxczp1cy1lYXN0LTE6MDAwMDAwMDAwMDAwOmF3cy1lbXVsYXRvci1sYWItMDEtY2xp",
+            "MD5OfBody": "59b2188e259d72b6f58ae06a7443f3a5",
+            "Body": "mensaje-demo"
+        }
+    ]
+}
+RESULT B7: PASS
+
+=== B8. Limpieza S3 ===
+08:28:09.923
+RESULT B8: PASS
+
+DURACIÓN TOTAL B: 25.434674632s — log completo en /home/<usuario>/aws-emulator-in-practice/results/01-getting-started/logs/exp_b_aws_cli.log

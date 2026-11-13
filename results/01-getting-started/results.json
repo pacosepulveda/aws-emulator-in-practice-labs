@@ -1,0 +1,250 @@
+{
+  "laboratorio": "01-getting-started",
+  "tipo": "ejecucion de referencia final",
+  "fecha_ejecucion": "2026-11-13",
+  "metodologia": "Totales generados por scripts/common/gen_stats.py a partir de este fichero. Los fallos históricos (ya corregidos) viven en results-historial.json, NO aquí.",
+  "entorno": {
+    "vm": "una VM Debian 13 (2 vCPU, 4 GB RAM) en un hypervisor local",
+    "so": "Debian 13, kernel 6.12.116, cpu host",
+    "recursos": "2 vCPU, 4 GB RAM, 30 GB",
+    "usuario": "lab (admin) + emu (ejecución, sin sudo)",
+    "docker": "29.9.3 (repo oficial, actualizado por aviso L2 de versiones <28)"
+  },
+  "versiones": {
+    "aws_emulator": "1.0.341",
+    "aws_cli": "2.40.2",
+    "boto3": "1.44.2",
+    "python": "3.13.5",
+    "docker": "29.9.3"
+  },
+  "configuracion_emulador": {
+    "endpoint": "https://127.0.0.1:9297",
+    "auth": "SigV4",
+    "telemetria": "OFF",
+    "cuenta_emulada": "000000000000"
+  },
+  "resultados": [
+    {
+      "id": "A1",
+      "exp": "A",
+      "prueba": "Instalación .deb con verificación GPG fail-closed",
+      "resultado": "PASS"
+    },
+    {
+      "id": "A2",
+      "exp": "A",
+      "prueba": "Arranque proceso→health (3 reps, mediana)",
+      "resultado": "PASS",
+      "detalle": "0,60 s (0,56–0,59)"
+    },
+    {
+      "id": "A3",
+      "exp": "A",
+      "prueba": "Ficheros generados (ca.pem/config/creds/truststore)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "A4",
+      "exp": "A",
+      "prueba": "RAM en reposo RSS/PSS (t0, t+30s, 3 reps)",
+      "resultado": "PASS",
+      "detalle": "RSS 286 MiB / PSS 284 MiB medianas; estable; tras batería 306,6 MiB. Doc afirma ~160 MiB: divergencia de medición documentada, no fallo"
+    },
+    {
+      "id": "B1",
+      "exp": "B",
+      "prueba": "S3 bucket + round-trip objeto (CLI)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "B2",
+      "exp": "B",
+      "prueba": "S3 versionado: 2 versiones + 1 delete marker + limpieza",
+      "resultado": "PASS"
+    },
+    {
+      "id": "B3",
+      "exp": "B",
+      "prueba": "S3 cifrado por defecto + Block Public Access (representación)",
+      "resultado": "PASS",
+      "detalle": "config almacenada y devuelta; NO implica aplicación efectiva (art. 03)"
+    },
+    {
+      "id": "B4",
+      "exp": "B",
+      "prueba": "DynamoDB create/wait-ACTIVE/put/get (CLI)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "B5",
+      "exp": "B",
+      "prueba": "SQS create/send/receive íntegro (CLI)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "C1",
+      "exp": "C-nativo",
+      "prueba": "STS precondición cuenta 000000000000",
+      "resultado": "PASS"
+    },
+    {
+      "id": "C2",
+      "exp": "C-nativo",
+      "prueba": "create_bucket",
+      "resultado": "PASS"
+    },
+    {
+      "id": "C3",
+      "exp": "C-nativo",
+      "prueba": "S3 put/list/get/delete",
+      "resultado": "PASS"
+    },
+    {
+      "id": "C4",
+      "exp": "C-nativo",
+      "prueba": "DynamoDB waiter ACTIVE + map/number",
+      "resultado": "PASS"
+    },
+    {
+      "id": "C5",
+      "exp": "C-nativo",
+      "prueba": "SQS JSON round-trip",
+      "resultado": "PASS"
+    },
+    {
+      "id": "C6",
+      "exp": "C-nativo",
+      "prueba": "delete_bucket",
+      "resultado": "PASS"
+    },
+    {
+      "id": "D1",
+      "exp": "D",
+      "prueba": "SIGTERM detiene proceso y borra estado (verificado)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "D2",
+      "exp": "D",
+      "prueba": "Credenciales/certificados regenerados por arranque",
+      "resultado": "PASS"
+    },
+    {
+      "id": "D3",
+      "exp": "D",
+      "prueba": "Multi-instancia aislada (9297/9298)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "E1",
+      "exp": "E",
+      "prueba": "Build Dockerfile oficial AL2023 + verificación RPM fail-closed",
+      "resultado": "PASS",
+      "detalle": "imagen sha256:bdd5323f… (Docker 29.9.3)"
+    },
+    {
+      "id": "E2",
+      "exp": "E",
+      "prueba": "Red bridge + -p 127.0.0.1:9298:9298 + health HTTPS",
+      "resultado": "PASS"
+    },
+    {
+      "id": "E3",
+      "exp": "E",
+      "prueba": "STS+S3+DynamoDB+SQS desde host vía bridge",
+      "resultado": "PASS"
+    },
+    {
+      "id": "E4",
+      "exp": "E",
+      "prueba": "Boto3 (exp_c) completo contra contenedor",
+      "resultado": "PASS"
+    },
+    {
+      "id": "E5",
+      "exp": "E",
+      "prueba": "Aislamiento LAN bind 127.0.0.1 (ss) + conexión TCP rechazada desde otra máquina LAN",
+      "resultado": "PASS",
+      "detalle": "verificado desde Pi en el mismo segmento L2"
+    },
+    {
+      "id": "E6",
+      "exp": "E",
+      "prueba": "Coexistencia nativa+contenedor con aislamiento de recursos",
+      "resultado": "PASS"
+    },
+    {
+      "id": "E7",
+      "exp": "E",
+      "prueba": "Cert/creds propiedad del usuario (--user uid:gid + volumen)",
+      "resultado": "PASS"
+    },
+    {
+      "id": "E8",
+      "exp": "E",
+      "prueba": "Ejecución como usuario no root en contenedor",
+      "resultado": "PASS",
+      "detalle": "USER 1000 + --user uid:gid"
+    },
+    {
+      "id": "E9",
+      "exp": "E",
+      "prueba": "Prueba negativa criptográfica: RPM manipulado rechazado por rpm -K",
+      "resultado": "PASS",
+      "detalle": "original: digests signatures OK (rc=0); manipulado: rc=1 (solo importa la clave AWS al keyring)"
+    },
+    {
+      "id": "S1",
+      "exp": "SEG",
+      "prueba": "Self-test: aborta con endpoint AWS real",
+      "resultado": "PASS"
+    },
+    {
+      "id": "S2",
+      "exp": "SEG",
+      "prueba": "Self-test: aborta con endpoint local sin TLS",
+      "resultado": "PASS"
+    },
+    {
+      "id": "S3",
+      "exp": "SEG",
+      "prueba": "Self-test: aborta sin endpoint",
+      "resultado": "PASS"
+    },
+    {
+      "id": "S4",
+      "exp": "SEG",
+      "prueba": "Self-test: aborta con endpoint no-local",
+      "resultado": "PASS"
+    },
+    {
+      "id": "S5",
+      "exp": "SEG",
+      "prueba": "Aborta con identidad incorrecta (STS falso local cuenta 123456789012, TLS válido)",
+      "resultado": "PASS",
+      "detalle": "exit 1 sin crear recursos"
+    },
+    {
+      "id": "S6",
+      "exp": "SEG",
+      "prueba": "Aborta con credenciales inválidas/vacías",
+      "resultado": "PASS"
+    }
+  ],
+  "resumen": {
+    "metodologia": "totales generados desde 'resultados'; OBSERVADO se contabiliza aparte",
+    "pruebas_funcionales": 33,
+    "observaciones_documentales": 0,
+    "totales_funcionales": {
+      "BLOCKED": 0,
+      "FAIL": 0,
+      "NOT_TESTED": 0,
+      "PARTIAL": 0,
+      "PASS": 33,
+      "UNSUPPORTED": 0
+    },
+    "ids_desconocidos": [],
+    "duracion_total_s": 0,
+    "comprobacion": "33 funcionales + 0 documentales = 33 registros"
+  }
+}

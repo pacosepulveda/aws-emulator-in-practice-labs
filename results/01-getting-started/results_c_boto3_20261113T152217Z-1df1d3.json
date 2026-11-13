@@ -1,0 +1,61 @@
+{
+  "experimento": "C-boto3",
+  "run_id": "20261113T152217Z-1df1d3",
+  "endpoint": "https://127.0.0.1:9298",
+  "resultados": [
+    {
+      "run_id": "20261113T152217Z-1df1d3",
+      "id": "C1",
+      "objetivo": "STS identidad (precondición, cuenta 000000000000)",
+      "resultado": "PASS",
+      "detalle": "cuenta=000000000000",
+      "duracion_s": 0.003,
+      "timestamp": "2026-11-13T15:22:17.377222+00:00"
+    },
+    {
+      "run_id": "20261113T152217Z-1df1d3",
+      "id": "C2",
+      "objetivo": "S3 create_bucket",
+      "resultado": "FAIL",
+      "detalle": "An error occurred (InvalidBucketName) when calling the CreateBucket operation: The specified bucket is not valid.",
+      "duracion_s": 0.01,
+      "timestamp": "2026-11-13T15:22:17.386899+00:00"
+    },
+    {
+      "run_id": "20261113T152217Z-1df1d3",
+      "id": "C3",
+      "objetivo": "S3 put/list/get/delete objeto",
+      "resultado": "FAIL",
+      "detalle": "An error occurred (NoSuchBucket) when calling the PutObject operation: The specified bucket does not exist",
+      "duracion_s": 0.005,
+      "timestamp": "2026-11-13T15:22:17.391945+00:00"
+    },
+    {
+      "run_id": "20261113T152217Z-1df1d3",
+      "id": "C4",
+      "objetivo": "DynamoDB create/wait-ACTIVE/put/get",
+      "resultado": "PASS",
+      "detalle": "map+number OK",
+      "duracion_s": 3.016,
+      "timestamp": "2026-11-13T15:22:20.407661+00:00"
+    },
+    {
+      "run_id": "20261113T152217Z-1df1d3",
+      "id": "C5",
+      "objetivo": "SQS create/send/receive/delete-message",
+      "resultado": "PASS",
+      "detalle": "mensaje JSON OK",
+      "duracion_s": 0.056,
+      "timestamp": "2026-11-13T15:22:20.463247+00:00"
+    },
+    {
+      "run_id": "20261113T152217Z-1df1d3",
+      "id": "C6",
+      "objetivo": "S3 delete_bucket (limpieza)",
+      "resultado": "FAIL",
+      "detalle": "An error occurred (NoSuchBucket) when calling the DeleteBucket operation: The specified bucket does not exist",
+      "duracion_s": 0.004,
+      "timestamp": "2026-11-13T15:22:20.466932+00:00"
+    }
+  ]
+}

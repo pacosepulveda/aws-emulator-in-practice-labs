@@ -1,0 +1,38 @@
+# Datos generados por experimentos y ejecuciones
+results/**/logs/
+results/**/*.tmp
+*.log
+
+# Estado del emulador y credenciales (NUNCA commitear)
+.aws/
+emulator_credentials
+ca.pem
+truststore.p12
+config.toml
+*.pem
+*.p12
+
+# Entornos virtuales y cachés Python
+.venv/
+__pycache__/
+*.pyc
+
+# Terraform/CDK/CloudFormation (fases futuras)
+.terraform/
+*.tfstate
+*.tfstate.*
+cdk.out/
+
+# Sistema
+.DS_Store
+
+# Paquete del emulador conservado localmente (reproducibilidad; no distribuir)
+results/**/artifacts/
+
+# Detalles internos de infraestructura (IPs LAN, acceso SSH, privilegios)
+docs/internal/
+labs/02-infrastructure-as-code/terraform/.terraform/
+labs/02-infrastructure-as-code/terraform/.terraform.lock.hcl
+labs/02-infrastructure-as-code/terraform/terraform.tfvars
+labs/02-infrastructure-as-code/terraform/*.tfstate*
+labs/02-infrastructure-as-code/terraform/tfplan

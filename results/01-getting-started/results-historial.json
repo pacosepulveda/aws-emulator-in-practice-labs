@@ -1,0 +1,87 @@
+{
+  "laboratorio": "01-getting-started",
+  "tipo": "historial de incidencias de iteraciones anteriores (TODAS ya resueltas)",
+  "nota": "Estos FAIL no reflejan el estado actual: se conservan como evidencia didáctica con su causa raíz y solución.",
+  "incidencias": [
+    {
+      "id": "H1",
+      "resultado_v1": "FAIL",
+      "prueba": "DynamoDB put inmediato tras create (B6 v1 / C4 v1)",
+      "causa": "race del test: PutItem mientras la tabla aún no está ACTIVE",
+      "solucion": "waiters/espera ACTIVE en exp_b y exp_c; el emulador exige lo mismo que AWS real",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H2",
+      "resultado_v1": "FAIL",
+      "prueba": "Docker port publishing sin -b 0.0.0.0 (E v0)",
+      "causa": "el emulador escucha en 127.0.0.1 dentro del contenedor; la doc oficial exige -b 0.0.0.0 para Docker",
+      "solucion": "Dockerfile v2 con ENTRYPOINT -b 0.0.0.0 + red bridge + -p 127.0.0.1:PORT:PORT",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H3",
+      "resultado_v1": "FAIL",
+      "prueba": "InvalidBucketName en exp_c (run contenedor)",
+      "causa": "run_id con mayúsculas (formato ISO T/Z) → nombre de bucket inválido",
+      "solucion": "run_id en minúsculas; el emulador valida nombres como AWS real",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H4",
+      "resultado_v1": "FAIL",
+      "prueba": "Build Docker con gpg --verify (gpg-agent ausente)",
+      "causa": "AL2023-minimal trae gnupg2-minimal sin agente; conflictos al instalar gnupg2 completo",
+      "solucion": "verificación con keyring de rpm (rpmkeys + rpm -K), fail-closed y sin agente",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H5",
+      "resultado_v1": "FAIL",
+      "prueba": "Contenedor AL2023: Fatal glibc error CPU x86-64-v2",
+      "causa": "el tipo de CPU por defecto del hypervisor (qemu64) no soporta x86-64-v2",
+      "solucion": "VM aws-emulator-lab cambiada a --cpu host",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H6",
+      "resultado_v1": "FAIL",
+      "prueba": "exp_c crash silencioso tras C5 (KeyError slice/TypeError)",
+      "causa": "delete_bucket devuelve dict truthy (ResponseMetadata) y record() no convertía a str",
+      "solucion": "str(detail) en record()",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H7",
+      "resultado_v1": "FAIL",
+      "prueba": "nonlocal failures en self-test (UnboundLocalError)",
+      "causa": "closure de Python sin nonlocal",
+      "solucion": "declarar nonlocal",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H8",
+      "resultado_v1": "FAIL",
+      "prueba": "pgrep -f matcheaba el wrapper SSH (guards de start/stop)",
+      "causa": "pgrep -f matchea la línea de comandos completa incluida la del propio ssh",
+      "solucion": "health-check por puerto + pidfile con validación /proc",
+      "estado": "RESUELTO"
+    },
+    {
+      "id": "H9",
+      "resultado_v1": "PARTIAL",
+      "prueba": "RAM en reposo 286 MiB vs ~160 MiB documentados",
+      "causa": "divergencia de metodología (RSS medido vs afirmación de la doc; posible medición en entorno distinto)",
+      "solucion": "metodología consistente RSS/PSS con 3 reps; registrado como dato observado, no fallo",
+      "estado": "ACLARADO"
+    },
+    {
+      "id": "H10",
+      "resultado_v1": "OBSERVADO",
+      "prueba": "403 transitorios de downloads.aws.com y 404 del zip clásico de AWS CLI",
+      "causa": "no determinada (posible limitación de peticiones repetidas; AWS CLI sigue documentando ambos métodos)",
+      "solucion": "reintentos con espera; install.sh firmado para CLI",
+      "estado": "OBSERVACION"
+    }
+  ]
+}

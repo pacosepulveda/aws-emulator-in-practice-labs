@@ -1,0 +1,47 @@
+{
+  "experimento": "C-boto3",
+  "resultados": [
+    {
+      "id": "C1",
+      "objetivo": "STS identidad (cuenta 000000000000)",
+      "resultado": "PASS",
+      "detalle": "cuenta=000000000000",
+      "duracion_s": 0.009
+    },
+    {
+      "id": "C2",
+      "objetivo": "S3 create_bucket",
+      "resultado": "PASS",
+      "detalle": "aws-emulator-lab-01-py-1794558903",
+      "duracion_s": 0.007
+    },
+    {
+      "id": "C3",
+      "objetivo": "S3 put/list/get/delete objeto",
+      "resultado": "PASS",
+      "detalle": "1 objetos listados",
+      "duracion_s": 0.017
+    },
+    {
+      "id": "C4",
+      "objetivo": "DynamoDB create/put/get/delete",
+      "resultado": "PASS",
+      "detalle": "item con mapa+numero OK",
+      "duracion_s": 3.021
+    },
+    {
+      "id": "C5",
+      "objetivo": "SQS create/send/receive/delete",
+      "resultado": "PASS",
+      "detalle": "mensaje JSON enviado+recibido+borrado",
+      "duracion_s": 0.018
+    },
+    {
+      "id": "C6",
+      "objetivo": "S3 delete_bucket (limpieza)",
+      "resultado": "PASS",
+      "detalle": "{'ResponseMetadata': {'RequestId': '4E8777912291DCB5', 'HostId': '4e8777912291dcb5f023b83f7f8a7f794b934a5fa75ab5d0fce5249ac9af26c0', 'HTTPStatusCode': 204, 'HTTPHeaders': {'content-type': 'application/xml', 'x-amz-request-id': '4E8777912291DCB5', 'x-amz-id-2': '4e8777912291dcb5f023b83f7f8a7f794b934a5fa75ab5d0fce5249ac9af26c0', 'date': 'Fri, 13 Nov 2026 08:35:06 GMT'}, 'RetryAttempts': 0}}",
+      "duracion_s": 0.004
+    }
+  ]
+}

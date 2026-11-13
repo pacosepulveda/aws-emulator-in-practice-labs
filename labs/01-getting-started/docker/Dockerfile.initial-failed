@@ -1,0 +1,22 @@
+FROM debian:13-slim
+
+# Construcción reproducible del emulador desde el paquete .deb oficial
+# con verificación GPG (fingerprint documentado por AWS).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl gnupg ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG BASE=https://downloads.aws.com/aws-emulator/packages/aws-emulator/LTS/latest
+RUN curl -fsSLo /tmp/aws-emulator.deb $BASE/aws-emulator_amd64.deb \
+ && curl -fsSLo /tmp/aws-emulator.deb.sig $BASE/aws-emulator_amd64.deb.sig \
+ && curl -fsSLo /tmp/aws-publishing.asc https://downloads.aws.com/keys/gpg/current.asc \
+ && gpg --import /tmp/aws-publishing.asc \
+ && gpg --verify /tmp/aws-emulator.deb.sig /tmp/aws-emulator.deb \
+ && apt-get install -y --no-install-recommends /tmp/aws-emulator.deb \
+ && rm -f /tmp/aws-emulator.deb* /tmp/aws-publishing.asc
+
+ENV EMULATOR_TELEMETRY=off
+EXPOSE 9297
+
+ENTRYPOINT ["/usr/bin/aws-emulator"]
+CMD ["-p", "9297", "-t", "off"]

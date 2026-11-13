@@ -1,0 +1,61 @@
+{
+  "experimento": "C-boto3",
+  "run_id": "2026111315310553649a",
+  "endpoint": "https://127.0.0.1:9297",
+  "resultados": [
+    {
+      "run_id": "2026111315310553649a",
+      "id": "C1",
+      "objetivo": "STS identidad (precondición, cuenta 000000000000)",
+      "resultado": "PASS",
+      "detalle": "cuenta=000000000000",
+      "duracion_s": 0.002,
+      "timestamp": "2026-11-13T15:31:05.060679+00:00"
+    },
+    {
+      "run_id": "2026111315310553649a",
+      "id": "C2",
+      "objetivo": "S3 create_bucket",
+      "resultado": "PASS",
+      "detalle": "aws-emulator-lab-01-2026111315310553649a-bucket",
+      "duracion_s": 0.007,
+      "timestamp": "2026-11-13T15:31:05.067286+00:00"
+    },
+    {
+      "run_id": "2026111315310553649a",
+      "id": "C3",
+      "objetivo": "S3 put/list/get/delete objeto",
+      "resultado": "PASS",
+      "detalle": "round-trip OK",
+      "duracion_s": 0.266,
+      "timestamp": "2026-11-13T15:31:05.333807+00:00"
+    },
+    {
+      "run_id": "2026111315310553649a",
+      "id": "C4",
+      "objetivo": "DynamoDB create/wait-ACTIVE/put/get",
+      "resultado": "PASS",
+      "detalle": "map+number OK",
+      "duracion_s": 3.015,
+      "timestamp": "2026-11-13T15:31:08.348495+00:00"
+    },
+    {
+      "run_id": "2026111315310553649a",
+      "id": "C5",
+      "objetivo": "SQS create/send/receive/delete-message",
+      "resultado": "PASS",
+      "detalle": "mensaje JSON OK",
+      "duracion_s": 0.048,
+      "timestamp": "2026-11-13T15:31:08.396366+00:00"
+    },
+    {
+      "run_id": "2026111315310553649a",
+      "id": "C6",
+      "objetivo": "S3 delete_bucket (limpieza)",
+      "resultado": "PASS",
+      "detalle": "HTTP 204",
+      "duracion_s": 0.004,
+      "timestamp": "2026-11-13T15:31:08.399919+00:00"
+    }
+  ]
+}
