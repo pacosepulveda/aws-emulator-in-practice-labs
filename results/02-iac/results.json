@@ -1,26 +1,480 @@
 {
-  "laboratorio": "02-infrastructure-as-code",
-  "prueba": "I-1 Terraform (etapa A)",
-  "fecha_ejecucion": "2026-11-13",
-  "versiones": {"terraform": "1.13.3", "provider_aws": "6.16.0", "aws_emulator": "1.0.341"},
-  "alcance": "S3 (bucket+versioning) + DynamoDB + SQS con provider AWS contra el emulador",
-  "resultados": [
-    {"id": "I-1.0", "prueba": "terraform 1.13.3 instalado con verificación SHA256", "resultado": "PASS"},
-    {"id": "I-1.1", "prueba": "terraform init: provider aws 6.16.0 instalado (firma HashiCorp)", "resultado": "PASS"},
-    {"id": "I-1.2", "prueba": "terraform plan inicial: 4 recursos a crear", "resultado": "PASS"},
-    {"id": "I-1.3", "prueba": "terraform apply: 4 added, bucket visible en el emulador", "resultado": "PASS"},
-    {"id": "I-1.4", "prueba": "idempotencia (2º plan -detailed-exitcode)", "resultado": "PARTIAL",
-     "detalle": "HALLAZGO DE FIDELIDAD: describe_table del emulador omite atributos por defecto (stream_enabled, table_class, deletion_protection, on_demand_throughput) → provider 6.16 interpreta drift y propone recrear la tabla DynamoDB. S3 y SQS son estables entre planes. Candidato a issue en aws/aws-emulator"},
-    {"id": "I-1.5", "prueba": "drift deliberado (suspender versioning vía CLI)", "resultado": "PASS",
-     "detalle": "plan detecta el cambio (exit=2). Matiz: el provider propone 'replace' en vez de 'update in-place' para versioning"},
-    {"id": "I-1.6", "prueba": "terraform destroy: 4 destroyed, 0 recursos residuales", "resultado": "PASS"},
-    {"id": "I-1.7", "prueba": "seguridad: endpoint fijado, credenciales del emulador vía tfvars (gitignored), custom_ca_bundle TLS, skip_* requeridos por el emulador", "resultado": "PASS"}
-  ],
-  "hallazgos_provider_v6": [
-    "endpoints {} es un bloque (no argumento map) en provider v6",
-    "ca_bundle renombrado a custom_ca_bundle en provider v6",
-    "skip_ec2_metadata_check no existe en v6 (el scrub de env lo cubre)"
-  ],
-  "resumen": {"PASS": 7, "PARTIAL": 1, "FAIL": 0},
-  "referencias": "labs/02-infrastructure-as-code/DESIGN.md · ../01-getting-started/metodologia-medicion.md"
+  "schema_version": "1.0",
+  "lab_id": "02-infrastructure-as-code",
+  "run_date": "2026-11-13",
+  "source": {
+    "evidence_ref": "results/02-iac/results.json",
+    "evidence_sha256": "c40f2af8ac0f7b757606eb6dc998a7d26e601ca193dc3eec2e65d4da5da6b9e7",
+    "generator": "scripts/common/normalize_results.py",
+    "sanitized_evidence_ref": "repro-ddb-sanitized.txt",
+    "sanitized_evidence_sha256": "ea0e9ed9bdda091c927dae790223762cb4d638534ee47349446a00393e55591e"
+  },
+  "environment": {
+    "emulator_name": "aws-emulator",
+    "emulator_version": "1.0.341",
+    "tools": [
+      {
+        "tool": "terraform",
+        "version": "1.13.3"
+      },
+      {
+        "tool": "provider_aws",
+        "version": "6.16.0"
+      },
+      {
+        "tool": "provider_random",
+        "version": "3.7.2"
+      }
+    ]
+  },
+  "summary": {
+    "final": {
+      "total": 37,
+      "pass": 36,
+      "fail": 1,
+      "partial": 0,
+      "skipped": 0
+    },
+    "note": "'final' = reference run; 'historical_corrected' keeps first-recorded outcomes as evidence",
+    "historical_corrected": {
+      "total": 2,
+      "pass": 0,
+      "fail": 1,
+      "partial": 1,
+      "skipped": 0
+    }
+  },
+  "tests": [
+    {
+      "id": "I-1.0",
+      "name": "terraform 1.13.3 installed with SHA-256 verification",
+      "original_name": "terraform 1.13.3 instalado con verificación SHA256",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-1.1",
+      "name": "terraform init: aws provider 6.16.0 installed (HashiCorp signature)",
+      "original_name": "terraform init: provider aws 6.16.0 instalado (firma HashiCorp)",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-1.2",
+      "name": "initial terraform plan: 4 resources to create",
+      "original_name": "terraform plan inicial: 4 recursos a crear",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-1.3",
+      "name": "terraform apply: 4 added, bucket visible in the emulator",
+      "original_name": "terraform apply: 4 added, bucket visible en el emulador",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-1.4",
+      "name": "idempotency (2nd plan with -detailed-exitcode)",
+      "original_name": "idempotencia (2º plan -detailed-exitcode)",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PARTIAL",
+      "phase": "historical_corrected",
+      "original_result": "PARTIAL"
+    },
+    {
+      "id": "I-1.5",
+      "name": "deliberate drift (suspend versioning via CLI)",
+      "original_name": "drift deliberado (suspender versioning vía CLI)",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-1.6",
+      "name": "terraform destroy: 4 destroyed, 0 residual resources",
+      "original_name": "terraform destroy: 4 destroyed, 0 recursos residuales",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-1.7",
+      "name": "security: endpoint pinned, emulator credentials via gitignored tfvars, TLS custom_ca_bundle, skip_* flags required by the emulator",
+      "original_name": "seguridad: endpoint fijado, credenciales del emulador vía tfvars (gitignored), custom_ca_bundle TLS, skip_* requeridos por el emulador",
+      "category": "terraform",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-2.0",
+      "name": "IAM probe via CLI: CreateRole/CreatePolicy/AttachRolePolicy/ListAttached",
+      "original_name": "Sondeo IAM vía CLI: CreateRole/CreatePolicy/AttachRolePolicy/ListAttached",
+      "category": "iam-probe",
+      "tool": "aws-cli",
+      "tool_version": "2.40.2",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-2.1",
+      "name": "apply with IAM: 7 resources (S3, versioning, DDB, SQS, role, policy, attachment)",
+      "original_name": "apply con IAM: 7 recursos (S3, versioning, DDB, SQS, role, policy, attachment)",
+      "category": "terraform-iam",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-2.2a",
+      "name": "own design: timestamp() in names → full replacement on every plan",
+      "original_name": "Diseño propio: timestamp() en nombres → reemplazo completo en cada plan",
+      "category": "terraform-iam",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "FAIL",
+      "phase": "historical_corrected",
+      "original_result": "FAIL"
+    },
+    {
+      "id": "I-2.2b",
+      "name": "idempotency (2nd plan with -detailed-exitcode) with corrected design",
+      "original_name": "idempotencia (2º plan -detailed-exitcode) con diseño corregido",
+      "category": "terraform-iam",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-2.3",
+      "name": "configuration change (SQS tag): plan detects update-in-place on SQS only",
+      "original_name": "cambio de configuración (tag en SQS): plan detecta 'will be updated in-place' SOLO en SQS",
+      "category": "terraform-iam",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-2.4",
+      "name": "destroy: 8 destroyed, no residual resources with the prefix",
+      "original_name": "destroy: 8 destroyed, sin recursos residuales del prefijo",
+      "category": "terraform-iam",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-2.5",
+      "name": "minimal reproducible DescribeTable case",
+      "original_name": "caso mínimo reproducible de DescribeTable",
+      "category": "terraform-iam",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-3.0",
+      "name": "OpenTofu 1.10.5 installed with SHA-256 verification (official SUMS)",
+      "original_name": "OpenTofu 1.10.5 instalado con verificación SHA256 (SUMS oficiales)",
+      "category": "opentofu",
+      "tool": "opentofu",
+      "tool_version": "1.10.5",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-3.1",
+      "name": "tofu init: aws 6.16.0 + random 3.7.2 providers from registry.opentofu.org (signed, key 0C0AF313E5FD9F80)",
+      "original_name": "tofu init: providers aws 6.16.0 + random 3.7.2 desde registry.opentofu.org (firmados, key 0C0AF313E5FD9F80)",
+      "category": "opentofu",
+      "tool": "opentofu",
+      "tool_version": "1.10.5",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-3.2",
+      "name": "same drop-in configuration: apply of 8 resources",
+      "original_name": "misma configuración drop-in: apply 8 recursos",
+      "category": "opentofu",
+      "tool": "opentofu",
+      "tool_version": "1.10.5",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-3.3",
+      "name": "idempotency (2nd plan with -detailed-exitcode)",
+      "original_name": "idempotencia (2º plan -detailed-exitcode)",
+      "category": "opentofu",
+      "tool": "opentofu",
+      "tool_version": "1.10.5",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-3.4",
+      "name": "deliberate S3 drift (suspend versioning)",
+      "original_name": "drift deliberado S3 (suspender versioning)",
+      "category": "opentofu",
+      "tool": "opentofu",
+      "tool_version": "1.10.5",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-3.5",
+      "name": "tofu destroy: 8 destroyed, no residuals",
+      "original_name": "tofu destroy: 8 destroyed, sin residuales",
+      "category": "opentofu",
+      "tool": "opentofu",
+      "tool_version": "1.10.5",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-4.0",
+      "name": "CloudFormation APIs present in the emulator (list-stacks)",
+      "original_name": "CloudFormation APIs presentes en el emulador (list-stacks)",
+      "category": "cloudformation",
+      "tool": "aws-cli",
+      "tool_version": "2.40.2",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-4.1",
+      "name": "create-stack (S3+DDB+SQS via YAML template with Sub/Parameters/Outputs)",
+      "original_name": "create-stack (S3+DDB+SQS vía template YAML con Sub/Parameters/Outputs)",
+      "category": "cloudformation",
+      "tool": "aws-cli",
+      "tool_version": "2.40.2",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-4.2",
+      "name": "update-stack with a new parameter",
+      "original_name": "update-stack con parámetro nuevo",
+      "category": "cloudformation",
+      "tool": "aws-cli",
+      "tool_version": "2.40.2",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-4.3",
+      "name": "delete-stack + residual verification",
+      "original_name": "delete-stack + verificación de residuos",
+      "category": "cloudformation",
+      "tool": "aws-cli",
+      "tool_version": "2.40.2",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-5.0",
+      "name": "CDK CLI 2.1148.1 + aws-cdk-lib 2.214.0 (Node 20), synth of the architecture (S3+DDB+SQS)",
+      "original_name": "CDK CLI 2.1148.1 + aws-cdk-lib 2.214.0 (Node 20), synth de la arquitectura (S3+DDB+SQS)",
+      "category": "cdk",
+      "tool": "cdk",
+      "tool_version": "2.1148.1",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-5.1",
+      "name": "cdk bootstrap against the emulator (CDKToolkit stack: 15 resources incl. AWS::SSM::Parameter and asset bucket)",
+      "original_name": "cdk bootstrap contra el emulador (stack CDKToolkit: 15 recursos, incl. AWS::SSM::Parameter y bucket de assets)",
+      "category": "cdk",
+      "tool": "cdk",
+      "tool_version": "2.1148.1",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-5.2",
+      "name": "cdk deploy: 5/5 CREATE_COMPLETE, correct Outputs, external verification OK",
+      "original_name": "cdk deploy: 5/5 CREATE_COMPLETE, Outputs correctos, verificación externa OK",
+      "category": "cdk",
+      "tool": "cdk",
+      "tool_version": "2.1148.1",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-5.3",
+      "name": "cdk destroy + bootstrap cleanup (CDKToolkit stack + versioned asset bucket)",
+      "original_name": "cdk destroy + limpieza del bootstrap (stack CDKToolkit + bucket de assets versionado)",
+      "category": "cdk",
+      "tool": "cdk",
+      "tool_version": "2.1148.1",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-5.4",
+      "name": "security: all CDK traffic to the emulator via generic AWS_ENDPOINT_URL (verified: bootstrap and deploy made no real calls)",
+      "original_name": "seguridad: todo el tráfico CDK al emulador vía AWS_ENDPOINT_URL genérico (verificado: bootstrap y deploy sin llamadas reales)",
+      "category": "cdk",
+      "tool": "cdk",
+      "tool_version": "2.1148.1",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-4.4",
+      "name": "aws cloudformation deploy via change sets: create → update → delete",
+      "original_name": "aws cloudformation deploy vía changesets: crear → actualizar → delete",
+      "category": "cloudformation",
+      "tool": "aws-cli",
+      "tool_version": "2.40.2",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-6.0",
+      "name": "DDB definitive minimal case (minimal HCL without timestamp/random): plan -out + show -json",
+      "original_name": "DDB caso mínimo definitivo (HCL mínimo sin timestamp/random): plan -out + show -json",
+      "category": "ddb-compat",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-6.1",
+      "name": "apply of the proposed drift",
+      "original_name": "apply del drift propuesto",
+      "category": "ddb-compat",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "FAIL",
+      "phase": "final"
+    },
+    {
+      "id": "I-6.2",
+      "name": "provider v6.16.0 source analysis (internal/service/dynamodb/table.go)",
+      "original_name": "Análisis código provider v6.16.0 (internal/service/dynamodb/table.go)",
+      "category": "ddb-compat",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-6.3",
+      "name": "re-test with newer emulator (v1.0.367, GPG signature verified, dedicated instance on port 9311)",
+      "original_name": "Repetición con emulador más reciente (v1.0.367, firma GPG verificada, instancia dedicada puerto 9311)",
+      "category": "ddb-compat",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.367",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-6.4",
+      "name": "issue reframed as an observed compatibility problem (no attribution)",
+      "original_name": "Issue reformulado como problema de compatibilidad observado (sin atribución)",
+      "category": "ddb-compat",
+      "tool": "terraform",
+      "tool_version": "1.13.3",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-7.0",
+      "name": "network barrier: emulab namespace WITHOUT external route + dedicated emulator instance on 127.0.0.1:9320",
+      "original_name": "Barrera de red: namespace emulab SIN ruta externa + emulador propio 127.0.0.1:9320 dentro",
+      "category": "network-barrier",
+      "tool": "netns",
+      "tool_version": "linux",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-7.1",
+      "name": "negative IAM test: endpoint omission inside the namespace",
+      "original_name": "Prueba negativa IAM: omisión de endpoint dentro del namespace",
+      "category": "network-barrier",
+      "tool": "netns",
+      "tool_version": "linux",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    },
+    {
+      "id": "I-7.2",
+      "name": "dependency download separated from execution",
+      "original_name": "Separación descarga de dependencias vs ejecución",
+      "category": "network-barrier",
+      "tool": "netns",
+      "tool_version": "linux",
+      "emulator_version": "1.0.341",
+      "result": "PASS",
+      "phase": "final"
+    }
+  ]
 }

@@ -1,0 +1,17 @@
+{
+  "name": "aws-emulator-lab-02-cdk",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.0",
+    "typescript": "~5.6.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.214.0",
+    "constructs": "^10.0.0"
+  }
+}

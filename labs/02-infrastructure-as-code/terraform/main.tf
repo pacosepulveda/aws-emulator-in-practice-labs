@@ -1,11 +1,18 @@
 # Lab 02 — Terraform contra AWS Emulator (etapa A: S3 + DynamoDB + SQS)
 
+# Pin de versión por herramienta instalada (SHA-256 verificado), no por
+# constraint: "1.13.3" exacto excluía OpenTofu 1.10 (hallazgo I-3).
+# 1.13.3 = Terraform · 1.10.5 = OpenTofu, ambos ≥1.6
 terraform {
-  required_version = "1.13.3"
+  required_version = ">= 1.6.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "6.16.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.7.2"
     }
   }
 }
@@ -19,12 +26,17 @@ provider "aws" {
   # v6 renombró ca_bundle → custom_ca_bundle
   custom_ca_bundle            = var.emulator_ca_bundle
 
-  # Endpoints explícitos por servicio (localhost del emulador)
+  # Endpoints explícitos por servicio (localhost del emulador).
+  # ATENCIÓN (hallazgo I-2): omitir aquí un servicio usado por recursos del plan
+  # hace que el provider LLAME AL AWS REAL con las credenciales del emulador
+  # (visto con IAM: 25 reintentos contra iam.amazonaws.com). Todos los servicios
+  # que use la configuración DEBEN estar listados.
   endpoints {
     s3       = var.emulator_endpoint
     dynamodb = var.emulator_endpoint
     sqs      = var.emulator_endpoint
     sts      = var.emulator_endpoint
+    iam      = var.emulator_endpoint
   }
 
   # Requeridos para un emulador (sin validación contra AWS real)
@@ -62,8 +74,14 @@ variable "resource_prefix" {
   default = "aws-emulator-lab-02"
 }
 
+# Sufijo persistido en el state (estable entre planes; timestamp() se reevalúa
+# en cada plan y provocaría reemplazos completos — hallazgo de diseño propio I-2)
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 locals {
-  run_id = formatdate("YYYYMMDDhhmmss", timestamp())
+  run_id = random_id.suffix.hex
 }
 
 # ---- S3 ----
@@ -93,6 +111,36 @@ resource "aws_dynamodb_table" "state" {
 # ---- SQS ----
 resource "aws_sqs_queue" "tasks" {
   name = "${var.resource_prefix}-tf-${local.run_id}"
+}
+
+# ---- IAM (I-2) ----
+resource "aws_iam_role" "lab_role" {
+  name = "${var.resource_prefix}-tf-${local.run_id}"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_policy" "lab_policy" {
+  name = "${var.resource_prefix}-tf-${local.run_id}"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["s3:GetObject", "s3:PutObject"]
+      Resource = "${aws_s3_bucket.artifacts.arn}/*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lab_attach" {
+  role       = aws_iam_role.lab_role.name
+  policy_arn = aws_iam_policy.lab_policy.arn
 }
 
 output "bucket_name" {

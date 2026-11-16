@@ -50,8 +50,8 @@ make clean          # removes ONLY resources named aws-emulator-lab-*
 
 | Lab | Focus | Status | Results |
 |---|---|---|---|
-| 01 | Installation, first steps, Docker, persistence, security guards | ✅ complete | `results/01-getting-started/` |
-| 02 | Infrastructure as Code (Terraform first; OpenTofu/CloudFormation/CDK later) | 🚧 in progress | `results/02-iac/` |
+| 01 | Installation, first steps, Docker, persistence, security guards | ✅ complete (33/33 PASS) | [`results/01-getting-started/`](results/01-getting-started/) · [labs/01](labs/01-getting-started/) (EN · [ES](labs/01-getting-started/README.es.md)) |
+| 02 | Infrastructure as Code: Terraform, OpenTofu, CloudFormation, CDK, DDB compatibility case, netns barrier | ✅ complete (37 final: 36 PASS + 1 documented FAIL; 2 corrected historical) | [`results/02-iac/`](results/02-iac/) · [labs/02](labs/02-infrastructure-as-code/) |
 
 ## Tested versions (reference run)
 
@@ -61,6 +61,8 @@ make clean          # removes ONLY resources named aws-emulator-lab-*
 | AWS CLI | 2.40.2 (install.sh, PGP-verified) |
 | boto3 / botocore | 1.44.2 (locked) |
 | Terraform | 1.13.3 (SHA-256) + `hashicorp/aws` provider 6.16.0 |
+| OpenTofu | 1.10.5 (SHA-256, official SUMS) |
+| CDK | CLI 2.1148.1 + aws-cdk-lib 2.214 (Node 20) |
 | Docker | 29.9.3 |
 | OS | Debian 13 (host VM) · Amazon Linux 2023-minimal (container) |
 

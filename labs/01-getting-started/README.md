@@ -1,34 +1,42 @@
-# Lab 01 — Instalación y primeros pasos con AWS Emulator
+# Lab 01 — Getting started with AWS Emulator
 
-Objetivo: instalar el emulador (nativo y Docker), verificar su comportamiento
-con AWS CLI y Boto3 (S3, DynamoDB, SQS, STS), medir arranque/recursos y
-documentar persistencia y limitaciones observadas.
+> 📖 **También disponible en español:** [README.es.md](README.es.md)
 
-## Experimentos
+Goal: install the AWS Emulator (native and Docker), verify its behaviour with
+AWS CLI and Boto3 (S3, DynamoDB, SQS, STS), measure startup time and resource
+usage, and document persistence and observed limitations.
 
-| ID  | Título | Script/Procedimiento |
-|-----|--------|----------------------|
-| A   | Instalación nativa y arranque | `scripts/bootstrap/install-deps.sh` + `scripts/emulator/start.sh` |
-| B   | AWS CLI: STS/S3/DynamoDB/SQS | `labs/01-getting-started/exp_b_aws_cli.sh` |
-| C   | Python + Boto3 | `labs/01-getting-started/exp_c_boto3.py` |
-| D   | Persistencia y reinicio | `labs/01-getting-started/exp_d_persistence.sh` |
-| E   | Instalación en Docker | `labs/01-getting-started/exp_e_docker.md` + Dockerfile |
+**Reference result: 33/33 PASS** (plus a preserved history of 10 resolved
+incidents, kept as didactic evidence). Full reports:
+[`results/01-getting-started/`](../../results/01-getting-started/).
 
-## Requisitos
+## Experiments
 
-- VM Debian 13 (2 vCPU / 4 GB / 30 GB), usuario `lab` sin privilegios
-- Docker solo para el experimento E
-- Sin credenciales AWS reales en la máquina
+| ID | Title | Script / procedure |
+|----|-------|--------------------|
+| B | AWS CLI smoke test (STS / S3 / DynamoDB / SQS) | [`exp_b_aws_cli.sh`](exp_b_aws_cli.sh) |
+| C | Boto3 SDK battery (aborts unless the endpoint is local) | [`exp_c_boto3.py`](exp_c_boto3.py) |
+| D | Persistence: SIGTERM wipes memory-only state; multi-instance isolation | [`exp_d_persistence.sh`](exp_d_persistence.sh) |
+| E | Docker: official procedure + bridge + localhost publishing + guards | [`exp_e_docker.sh`](exp_e_docker.sh) · [`exp_e_docker.md`](exp_e_docker.md) |
 
-## Ejecución
+## Key results (reference run)
 
-```bash
-make setup && make start && make test
-```
+- Startup to health check: **0.60 s median** (3 runs, 0.56–0.59 s)
+- Memory at rest: **286 MiB RSS** / 284 MiB PSS (stable)
+- **State is memory-only**: SIGTERM removes all resources (verified with marker
+  bucket/table, not assumed from docs)
+- Multi-instance: fully isolated per port
+- Docker: 9/9 checks, including L2 isolation from another LAN machine
 
-Los resultados se escriben en `results/01-getting-started/` (report.md + results.json).
+## Safety model
 
-## Nomenclatura de recursos
+Experiment scripts **abort by design** unless: the endpoint is a local HTTPS
+endpoint, the STS identity matches the emulator's (`000000000000`), AWS
+environment variables are scrubbed, explicit emulator credentials are used, and
+the negative tests for every guard pass.
 
-Todos los recursos creados por este laboratorio usan el prefijo `aws-emulator-lab-01-`
-para que `make clean` pueda eliminarlos de forma explícita y limitada.
+> ⚠️ The emulator emulates security configuration; it does **not** enforce it.
+> We verified representation, never enforcement.
+
+*Note: experiment scripts retain Spanish inline comments from the first run;
+they are being adapted progressively under the repository language convention.*

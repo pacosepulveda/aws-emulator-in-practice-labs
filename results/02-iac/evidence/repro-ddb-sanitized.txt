@@ -1,0 +1,98 @@
+# Sanitized evidence — Lab 02 I-6 minimal DDB drift case (emulator 1.0.341)
+# Source: private repo results/02-iac/repro-minimal/ — no translation of tool output.
+
+=== plan-show-341.json (terraform show -json, drift proposal) ===
+{
+  "format_version": "1.2",
+  "terraform_version": "1.13.3",
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dynamodb_table.repro",
+          "mode": "manage",
+          "type": "aws_dynamodb_table",
+          "name": "repro",
+          "provider_name": "registry.terraform.io/hashicorp/aws",
+          "schema_version": 1,
+          "values": {
+            "attribute": [{"name": "pk", "type": "S"}],
+            "billing_mode": "PAY_PER_REQUEST",
+            "hash_key": "pk",
+            "name": "aws-emulator-lab-02-repro-min",
+            "on_demand_throughput": [],
+            "region": "us-east-1"
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_dynamodb_table.repro",
+      "mode": "manage",
+      "type": "aws_dynamodb_table",
+      "name": "repro",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "on_demand_throughput": [{"max_read_request_units": -1, "max_write_request_units": -1}],
+          "billing_mode": "PAY_PER_REQUEST",
+          "hash_key": "pk",
+          "name": "aws-emulator-lab-02-repro-min",
+          "attribute": [{"name": "pk", "type": "S"}]
+        },
+        "after": {
+          "on_demand_throughput": [],
+          "billing_mode": "PAY_PER_REQUEST",
+          "hash_key": "pk",
+          "name": "aws-emulator-lab-02-repro-min",
+          "attribute": [{"name": "pk", "type": "S"}]
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": false
+      }
+    }
+  ],
+  "notas": "Extracto relevante de 'terraform show -json tfplan' (campos sin diferencia omitidos). Único atributo con diff: on_demand_throughput. actions=['update'] (no replace). Execute fue abortado por ValidationException de UpdateTable sin campos (registro en update-error-341.txt)."
+}
+
+=== update-error-341.txt (apply error) ===
+# Error al ejecutar el plan propuesto (terraform apply -auto-approve)
+# Contexto: tabla PAY_PER_REQUEST creada sin on_demand_throughput declarado;
+# el plan propone vaciar el bloque on_demand_throughput (actions=["update"]).
+# El provider genera UpdateTable sin ningún campo y el backend lo rechaza:
+
+Error: updating AWS DynamoDB Table (aws-emulator-lab-02-repro-min): operation
+error DynamoDB: UpdateTable, https response error StatusCode: 400, RequestID:
+5PTYCMRJ4TWAG9L6GIXJR26712G9KM9TL3916YESA8LFUC23BCP3, api error
+ValidationException: At least one of ProvisionedThroughput, BillingMode,
+UpdateStreamEnabled, GlobalSecondaryIndexUpdates, SSESpecification,
+ReplicaUpdates, MultiAccountReplicaReady, ReplicaTransitRoleArn,
+MultiRegionConsistency, DeletionProtectionEnabled, OnDemandThroughput,
+WarmThroughput or TableClass is required
+
+# Resultado: el estado no cambia -> el siguiente plan vuelve a proponer el mismo
+# update -> bucle no convergente (verificado con plan -detailed-exitcode, exit=2).
+
+=== describe-table-341.json (DescribeTable after failed apply) ===
+{
+  "Table": {
+    "AttributeDefinitions": [{"AttributeName": "pk", "AttributeType": "S"}],
+    "BillingModeSummary": {"BillingMode": "PAY_PER_REQUEST", "LastUpdateToPayPerRequestDateTime": "2026-11-14T16:40:46.198093+00:00"},
+    "CreationDateTime": "2026-11-14T16:40:46.000000+00:00",
+    "DeletionProtectionEnabled": false,
+    "ItemCount": 0,
+    "KeySchema": [{"AttributeName": "pk", "KeyType": "HASH"}],
+    "OnDemandThroughput": {"MaxReadRequestUnits": -1, "MaxWriteRequestUnits": -1},
+    "ProvisionedThroughput": {"NumberOfDecreasesToday": 0, "ReadCapacityUnits": 0, "WriteCapacityUnits": 0},
+    "TableArn": "arn:aws:dynamodb:us-east-1:000000000000:table/aws-emulator-lab-02-repro-min",
+    "TableId": "redactado",
+    "TableName": "aws-emulator-lab-02-repro-min",
+    "TableSizeBytes": 0,
+    "TableStatus": "ACTIVE",
+    "WarmThroughput": {"ReadUnitsPerSecond": 12000, "Status": "ACTIVE", "WriteUnitsPerSecond": 4000}
+  }
+}
