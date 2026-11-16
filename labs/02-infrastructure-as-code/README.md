@@ -52,13 +52,21 @@ historical entries kept as evidence).
 ## Repository layout
 
 ```
-terraform/main.tf          # I-1/I-2 reference configuration (S3+DDB+SQS+IAM)
-cdk/                       # I-5: CDK app (app.ts) + runner script
-repro/ddb-minimal.main.tf  # I-6: minimal non-converging drift case
-repro/netns-negative.*     # I-7: network barrier + negative IAM test
+terraform/main.tf             # I-1/I-2 reference configuration (S3+DDB+SQS+IAM)
+cloudformation/template.yaml  # I-4: sample template (recreated; session original was ad hoc)
+cloudformation/run-cfn.sh     # I-4: create → update → deploy (change sets) → delete
+cdk/                          # I-5: CDK app (app.ts) + runner script
+repro/ddb-minimal.main.tf     # I-6: minimal non-converging drift case
+repro/netns-negative.*        # I-7: network barrier + negative IAM test
 repro/repro-ddb-describe.sh
-../../results/02-iac/      # normalized results + sanitized evidence
+../../scripts/netns/          # I-7: independent network barrier (netns, no external route)
+../../results/02-iac/         # normalized results + sanitized evidence
 ```
+
+> Note on I-4: the original experiment session used an ad-hoc template; the
+> published `template.yaml` recreates the same logical stack for reproducibility.
+> `run-netns-negative.sh` requires `scripts/netns/emulab-netns.sh` from the
+> repository root (included since this commit).
 
 ## Security notes
 

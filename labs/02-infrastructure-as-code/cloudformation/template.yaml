@@ -1,0 +1,50 @@
+# Sample CloudFormation template — Lab 02 I-4 (S3 + DynamoDB + SQS).
+# The original session template was created ad hoc; this published sample
+# reproduces the same logical stack used in the documented procedure
+# (create-stack → update-stack with a new parameter → deploy via change sets
+# → delete-stack). Sub/Parameters/Outputs are exercised as recorded.
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lab 02 I-4 reference stack (S3 + DDB + SQS) against AWS Emulator
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: seclab
+    Description: Prefix for resource names (updated in the update-stack test)
+
+Resources:
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${EnvironmentName}-cfn-bucket"
+      VersioningConfiguration:
+        Status: Enabled
+
+  StatusTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${EnvironmentName}-cfn-table"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      OnDemandThroughput:
+        MaxReadRequestUnits: 1
+        MaxWriteRequestUnits: 1
+
+  JobsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${EnvironmentName}-cfn-queue"
+      SqsManagedSseEnabled: false
+
+Outputs:
+  BucketName:
+    Value: !Ref DataBucket
+  TableArn:
+    Value: !GetAtt StatusTable.Arn
+  QueueUrl:
+    Value: !Ref JobsQueue
