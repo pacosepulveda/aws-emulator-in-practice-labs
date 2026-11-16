@@ -4,7 +4,7 @@
 > validado usa **paquete RPM versionado**, **verificación de firma en el keyring
 > rpm**, **red bridge con publicación solo en localhost**, **TLS con la CA del
 > emulador** y **usuario no root**. El primer intento fallido (v0) se conserva en
-> [Dockerfile.initial-failed](Dockerfile.initial-failed) como evidencia didáctica.
+> [Dockerfile.initial-failed](docker/Dockerfile.initial-failed) como evidencia didáctica.
 
 ## Contexto
 
