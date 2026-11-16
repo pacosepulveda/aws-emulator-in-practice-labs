@@ -1,6 +1,6 @@
 # Lab 02 — Infrastructure as Code against AWS Emulator
 
-> 📖 📖 Artículo en español: [cloudsecurityinpractice.com](https://cloudsecurityinpractice.com) (blog bilingüe ES/EN)
+> 📖 Artículo en español: [cloudsecurityinpractice.com](https://cloudsecurityinpractice.com) (blog bilingüe ES/EN)
 
 The same logical architecture — **S3 + DynamoDB + SQS** (plus **IAM** where tool
 support was validated) — deployed with four IaC tools against AWS Emulator on
